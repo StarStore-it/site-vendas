@@ -237,3 +237,25 @@ html {
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(#5a6fd8, #6a4190);
 }
+
+/* Botões Admin Novos */
+.delivered-btn {
+    background: linear-gradient(45deg, #28a745, #20c997) !important;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.5) !important;
+}
+
+.delivered-btn:hover {
+    background: linear-gradient(45deg, #218838, #1ea085) !important;
+    box-shadow: 0 12px 35px rgba(40, 167, 69, 0.7) !important;
+}
+
+.delete-btn {
+    background: linear-gradient(45deg, #dc3545, #c82333) !important;
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.5) !important;
+}
+
+.delete-btn:hover {
+    background: linear-gradient(45deg, #c82333, #bd2130) !important;
+    box-shadow: 0 12px 35px rgba(220, 53, 69, 0.7) !important;
+}
+

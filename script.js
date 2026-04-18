@@ -51,11 +51,13 @@ async function loadProducts() {
                 <h3>${p.nome} - R$ ${p.preco}</h3>
                 <input type="number" id="q${i}" value="1" min="1">
                 <button onclick="addToCart(${i})">+ Carrinho</button>
+                ${loggedInUser === 'adimin' ? `<button class="delete-btn" onclick="deleteProduct(${p.id})" style="margin-left:10px;">Excluir</button>` : ''}
             </div>`).join('') || '<p>Sem produtos</p>';
     } catch (e) {
         document.getElementById('productsContainer').innerHTML = '<p>Erro produtos</p>';
     }
 }
+
 
 // PEDIDOS - FIX [object Object]
 async function showPedidos() {
@@ -63,12 +65,14 @@ async function showPedidos() {
         const res = await fetch('/pedidos.json');
         let pedidosRaw = await res.json();
         const pedidos = Array.isArray(pedidosRaw) ? pedidosRaw : [pedidosRaw];
+        // Filtrar pedidos entregues
+        const pedidosPendentes = pedidos.filter(p => p.status !== 'entregue');
         const list = document.getElementById('pedidosList');
-        if (!pedidos.length) {
-            list.innerHTML = '<p style="text-align:center; color:#666;">Nenhum pedido encontrado</p>';
+        if (!pedidosPendentes.length) {
+            list.innerHTML = '<p style="text-align:center; color:#666;">Nenhum pedido pendente encontrado</p>';
             return;
         }
-        list.innerHTML = pedidos.map((p, index) => {
+        list.innerHTML = pedidosPendentes.map((p, index) => {
             // FIX ITEMS [object Object]
             let itemsText = 'N/A';
             if (Array.isArray(p.items)) {
@@ -84,7 +88,8 @@ async function showPedidos() {
                     <strong>Contato:</strong> ${p.contato || 'N/A'}<br>
                     <strong>Items:</strong> ${itemsText}<br>
                     <strong>Total:</strong> <span style="color:#28a745; font-size:1.2em;">R$ ${(p.total || 0).toFixed(2)}</span><br>
-                    <strong>Data:</strong> ${p.date || new Date().toLocaleString() || 'N/A'}
+                    <strong>Data:</strong> ${p.date || new Date().toLocaleString() || 'N/A'}<br>
+                    <button class="delivered-btn" onclick="markAsDelivered(${pedidos.indexOf(p)})" style="margin-top:10px;">Marcar como Entregue</button>
                 </div>
             `;
         }).join('');
@@ -93,6 +98,7 @@ async function showPedidos() {
         document.getElementById('pedidosList').innerHTML = '<p style="color:red;">Erro ao carregar pedidos</p>';
     }
 }
+
 
 // CARRINHO
 function addToCart(i) {
@@ -195,6 +201,48 @@ async function addProduct() {
         alert('Nome e preço > 0 obrigatórios');
     }
 }
+
+// NOVAS FUNÇÕES ADMIN
+async function markAsDelivered(originalIndex) {
+    try {
+        const res = await fetch('/pedidos.json');
+        let pedidosRaw = await res.json();
+        let pedidos = Array.isArray(pedidosRaw) ? pedidosRaw : [pedidosRaw];
+        if (originalIndex >= 0 && originalIndex < pedidos.length) {
+            pedidos[originalIndex].status = 'entregue';
+            await fetch('/pedidos.json', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(pedidos)
+            });
+            alert('✅ Pedido marcado como entregue!');
+            showPedidos(); // Refresh
+        }
+    } catch (e) {
+        console.error('Erro marcar entregue:', e);
+        alert('Erro ao atualizar pedido');
+    }
+}
+
+async function deleteProduct(id) {
+    if (!confirm('Confirmar exclusão do produto?')) return;
+    try {
+        const res = await fetch('/products.json');
+        let current = await res.json();
+        const updated = current.filter(p => p.id !== id);
+        await fetch('/products.json', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(updated)
+        });
+        alert('✅ Produto excluído!');
+        loadProducts(); // Refresh
+    } catch (e) {
+        console.error('Erro excluir produto:', e);
+        alert('Erro ao excluir');
+    }
+}
+
 
 // INIT
 window.onload = () => {
