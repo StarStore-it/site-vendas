@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site de Vendas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- TELA LOGIN -->
+    <div id="loginScreen" class="screen active">
+        <h1>Login</h1>
+        <div style="max-width: 350px; margin: 0 auto;">
+            <input type="text" id="username" placeholder="Usuário">
+            <input type="password" id="password" placeholder="Senha">
+            <button onclick="login()">Entrar</button>
+            <button onclick="guestLogin()">Entrar como Convidado</button>
+        </div>
+    </div>
+
+    <!-- TELA PRINCIPAL -->
+    <div id="mainScreen" class="screen">
+        <header>
+            <h1>Produtos</h1>
+            <div>
+                <button onclick="showCart()">Carrinho (<span id="cartCount">0</span>)</button>
+                <button onclick="logout()">Sair</button>
+            </div>
+        </header>
+
+        <!-- PAINEL ADMIN -->
+        <div id="adminSection">
+            <h2>Painel Admin</h2>
+            <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px;">
+                <button onclick="toggleAddProduct()">➕ Adicionar Produto</button>
+                <button onclick="showPedidos()">📋 Ver Pedidos</button>
+            </div>
+            <div id="addProductForm" style="display:none; background:rgba(255,255,255,0.8); padding:25px; border-radius:12px; margin-bottom:20px;">
+                <h3>Novo Produto</h3>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <input id="newNome" placeholder="Nome do produto">
+                    <input id="newPreco" type="number" step="0.01" placeholder="Preço (R$)" >
+                    <button onclick="addProduct()">Salvar Produto</button>
+                </div>
+            </div>
+            <div id="pedidosList" style="min-height:200px;"></div>
+        </div>
+
+        <!-- PRODUTOS -->
+        <div id="productsContainer">
+            Carregando produtos...
+        </div>
+    </div>
+
+    <!-- CARRINHO -->
+    <div id="cartScreen" class="screen">
+        <h1>Carrinho de Compras</h1>
+        <div id="cartItems" style="min-height:200px;"></div>
+        <div style="display:flex; gap:15px; justify-content:center; margin-top:30px;">
+            <button onclick="showMain()">🛒 Continuar Comprando</button>
+            <button onclick="buy()">💳 Finalizar Compra</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
