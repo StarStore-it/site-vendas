@@ -1,8 +1,8 @@
 [
   {
-    "id": 2,
-    "nome": "teste",
-    "preco": 12354.0,
-    "imagem": "images/imagem_teste.jpg"
+    "id": 1,
+    "nome": "teste-imagem",
+    "preco": 1000.0,
+    "imagem": "images/imagem_teste-imagem.webp"
   }
 ]
