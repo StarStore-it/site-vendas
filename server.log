@@ -1,0 +1,36 @@
+nohup: ignoring input
+ * Serving Flask app 'server'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.0.0.132:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 428-111-728
+127.0.0.1 - - [22/Apr/2026 23:53:55] "GET / HTTP/1.1" 304 -
+127.0.0.1 - - [22/Apr/2026 23:53:55] "GET /style.css HTTP/1.1" 304 -
+127.0.0.1 - - [22/Apr/2026 23:53:55] "GET /script.js HTTP/1.1" 304 -
+127.0.0.1 - - [22/Apr/2026 23:53:58] "GET /products.json HTTP/1.1" 200 -
+127.0.0.1 - - [22/Apr/2026 23:53:58] "GET /images/4296127590_WhatsApp%20Image%202026-03-30%20at%2020.36.50%20(1).jpg HTTP/1.1" 304 -
+127.0.0.1 - - [22/Apr/2026 23:54:06] "POST /upload HTTP/1.1" 200 -
+127.0.0.1 - - [22/Apr/2026 23:54:07] "GET /products.json HTTP/1.1" 200 -
+127.0.0.1 - - [22/Apr/2026 23:54:07] "POST /products.json HTTP/1.1" 200 -
+127.0.0.1 - - [22/Apr/2026 23:54:09] "GET /products.json HTTP/1.1" 200 -
+127.0.0.1 - - [22/Apr/2026 23:54:09] "GET /images/4297863670_WhatsApp%20Image%202026-04-13%20at%2019.29.51%20(4).jpg HTTP/1.1" 200 -
+ * Detected change in '/workspaces/site-vendas/server.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 428-111-728
+ * Detected change in '/workspaces/site-vendas/server.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 428-111-728
+127.0.0.1 - - [23/Apr/2026 00:08:21] "GET / HTTP/1.1" 304 -
+127.0.0.1 - - [23/Apr/2026 00:08:21] "GET /style.css HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 00:08:21] "GET /script.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 00:08:28] "POST /login HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 00:08:28] "GET /products.json HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 00:08:29] "GET /images/4296127590_WhatsApp%20Image%202026-03-30%20at%2020.36.50%20(1).jpg HTTP/1.1" 304 -
+127.0.0.1 - - [23/Apr/2026 00:08:29] "GET /images/4297863670_WhatsApp%20Image%202026-04-13%20at%2019.29.51%20(4).jpg HTTP/1.1" 304 -

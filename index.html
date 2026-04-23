@@ -37,10 +37,21 @@
             </div>
             <div id="addProductForm" style="display:none; background:rgba(255,255,255,0.8); padding:25px; border-radius:12px; margin-bottom:20px;">
                 <h3>Novo Produto</h3>
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <input id="newNome" placeholder="Nome do produto">
-                    <input id="newPreco" type="number" step="0.01" placeholder="Preço (R$)" >
-                    <button onclick="addProduct()">Salvar Produto</button>
+<div style="display:flex; flex-direction:column; gap:15px; align-items:center;">
+                    <div style="display:flex; gap:15px; width:100%; flex-wrap:wrap; justify-content:center;">
+                        <input id="newNome" placeholder="Nome do produto" style="flex:1; min-width:200px;">
+                        <input id="newPreco" type="number" step="0.01" placeholder="Preço (R$)" style="flex:1; min-width:150px;">
+                    </div>
+                    <label for="newImagem" style="display:flex; flex-direction:column; align-items:center; cursor:pointer; padding:20px; border:3px dashed #667eea; border-radius:20px; background:linear-gradient(45deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1)); transition:all 0.3s; min-height:120px; width:300px; font-size:16px;">
+                        <span style="margin-bottom:10px; font-weight:600; color:#667eea;">📁 Escolher Imagem</span>
+                        <span id="previewText" style="color:#666; font-size:14px;">Nenhuma imagem selecionada</span>
+                    </label>
+                    <input id="newImagem" type="file" accept="image/*" style="display:none;" onchange="handleImagePreview()">
+                    <img id="imagePreview" src="" alt="Preview" style="display:none; width:300px; height:200px; border-radius:15px; object-fit:cover; box-shadow:0 8px 25px rgba(0,0,0,0.3); margin-top:10px;"></img>
+                    <div style="display:flex; gap:15px;">
+                        <button onclick="addProduct()" style="flex:1;">Salvar Produto</button>
+                        <button onclick="clearImagePreview()" style="flex:1; background:linear-gradient(45deg, #dc3545, #c82333);">Trocar Imagem</button>
+                    </div>
                 </div>
             </div>
             <div id="pedidosList" style="min-height:200px;"></div>

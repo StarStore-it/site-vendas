@@ -14,13 +14,27 @@ function showScreen(screenId) {
 }
 
 // LOGIN
-function login() {
+async function login() {
     const user = document.getElementById('username').value.trim();
     const pass = document.getElementById('password').value;
-    loggedInUser = (user === 'adimin' && pass === 'adiminadimin') ? 'adimin' : 'normal';
-    showScreen('mainScreen');
-    updateAdmin();
-    loadProducts();
+    try {
+        const res = await fetch('/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username: user, password: pass})
+        });
+        const data = await res.json();
+        if (data.success) {
+            loggedInUser = data.user;
+            showScreen('mainScreen');
+            updateAdmin();
+            loadProducts();
+        } else {
+            alert('Login inválido: ' + (data.error || 'Erro desconhecido'));
+        }
+    } catch (e) {
+        alert('Erro no login: ' + e.message);
+    }
 }
 
 function guestLogin() {
@@ -48,16 +62,18 @@ async function loadProducts() {
         const cont = document.getElementById('productsContainer');
         cont.innerHTML = products.map((p, i) => `
             <div class="product">
-                <h3>${p.nome} - R$ ${p.preco}</h3>
-                <input type="number" id="q${i}" value="1" min="1">
-                <button onclick="addToCart(${i})">+ Carrinho</button>
-                ${loggedInUser === 'adimin' ? `<button class="delete-btn" onclick="deleteProduct(${p.id})" style="margin-left:10px;">Excluir</button>` : ''}
-            </div>`).join('') || '<p>Sem produtos</p>';
+                ${p.imagem ? `<img src="${p.imagem}" class="product-img" alt="${p.nome}">` : ''}
+                <div class="product-details">
+                    <h3>${p.nome} - R$ ${p.preco}</h3>
+                    <input type="number" id="q${i}" value="1" min="1">
+                    <button onclick="addToCart(${i})">+ Carrinho</button>
+                    ${loggedInUser === 'adimin' ? `<button class="delete-btn" onclick="deleteProduct(${p.id})" style="margin-left:10px;">Excluir</button>` : ''}
+                </div>
+            </div>`).join('') || '<p>Sem produtos</p>'; 
     } catch (e) {
         document.getElementById('productsContainer').innerHTML = '<p>Erro produtos</p>';
     }
 }
-
 
 // PEDIDOS - FIX [object Object]
 async function showPedidos() {
@@ -98,7 +114,6 @@ async function showPedidos() {
         document.getElementById('pedidosList').innerHTML = '<p style="color:red;">Erro ao carregar pedidos</p>';
     }
 }
-
 
 // CARRINHO
 function addToCart(i) {
@@ -169,36 +184,73 @@ function toggleAddProduct() {
     form.style.display = form.style.display === 'none' ? 'block' : 'none';
 }
 
+function handleImagePreview() {
+    const fileInput = document.getElementById('newImagem');
+    const preview = document.getElementById('imagePreview');
+    const previewText = document.getElementById('previewText');
+    const file = fileInput.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            previewText.textContent = file.name;
+            document.querySelector('label[for="newImagem"] span:last-child').textContent = file.name;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.style.display = 'none';
+        previewText.textContent = 'Nenhuma imagem selecionada';
+        document.querySelector('label[for="newImagem"] span:last-child').textContent = 'Nenhuma imagem selecionada';
+    }
+}
+
+function clearImagePreview() {
+    document.getElementById('newImagem').value = '';
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('previewText').textContent = 'Nenhuma imagem selecionada';
+}
+
+/* uploadImage removed - using /add-product now */
+
 async function addProduct() {
     const nome = document.getElementById('newNome').value.trim();
     const preco = parseFloat(document.getElementById('newPreco').value);
-    if (nome && !isNaN(preco) && preco > 0) {
-        const newP = {
-            id: products.length ? Math.max(...products.map(p => p.id || 0)) + 1 : 1,
-            nome,
-            preco
-        };
-        try {
-            const res = await fetch('/products.json');
-            let current = [];
-            try {
-                current = await res.json();
-            } catch {}
-            current.push(newP);
-            await fetch('/products.json', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(current)
-            });
-            alert('✅ Produto adicionado!');
+    const fileInput = document.getElementById('newImagem');
+    const file = fileInput.files[0];
+    
+    if (!nome || isNaN(preco) || preco <= 0) {
+        alert('Nome e preço > 0 obrigatórios');
+        return;
+    }
+    
+    if (!file) {
+        alert('Imagem obrigatória');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('nome', nome);
+    formData.append('preco', preco.toString());
+    formData.append('image', file);
+    
+    try {
+        const res = await fetch('/add-product', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+        if (data.status === 'Produto adicionado com sucesso!') {
+            alert('✅ Produto adicionado! Imagem salva como: ' + data.filename);
             document.getElementById('newNome').value = '';
             document.getElementById('newPreco').value = '';
+            fileInput.value = '';
             loadProducts();
-        } catch (e) {
-            alert('Erro ao salvar');
+        } else {
+            alert('Erro: ' + (data.error || 'Falha ao adicionar'));
         }
-    } else {
-        alert('Nome e preço > 0 obrigatórios');
+    } catch (e) {
+        alert('Erro ao adicionar produto: ' + e.message);
     }
 }
 
@@ -227,22 +279,18 @@ async function markAsDelivered(originalIndex) {
 async function deleteProduct(id) {
     if (!confirm('Confirmar exclusão do produto?')) return;
     try {
-        const res = await fetch('/products.json');
-        let current = await res.json();
-        const updated = current.filter(p => p.id !== id);
         await fetch('/products.json', {
-            method: 'POST',
+            method: 'DELETE',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(updated)
+            body: JSON.stringify({id: id})
         });
-        alert('✅ Produto excluído!');
+        alert('✅ Produto e imagem excluídos!');
         loadProducts(); // Refresh
     } catch (e) {
         console.error('Erro excluir produto:', e);
         alert('Erro ao excluir');
     }
 }
-
 
 // INIT
 window.onload = () => {
