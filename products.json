@@ -1,2 +1,14 @@
 [
+  {
+    "id": 1,
+    "nome": "Bon\u00e9 Sexto Sentido",
+    "preco": 250.0,
+    "imagem": "images/imagem_Bon\u00e9_Sexto_Sentido.png"
+  },
+  {
+    "id": 2,
+    "nome": "Chap\u00e9u Sexto Sentido",
+    "preco": 220.0,
+    "imagem": "images/imagem_Chap\u00e9u_Sexto_Sentido.jpeg"
+  }
 ]
